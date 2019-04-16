@@ -1,167 +1,167 @@
 package easylog
 
 import (
+	"fmt"
+	"io"
 	"log"
+	"os"
 	"strings"
 	"sync"
 )
 
-// Levels
-const (
-	FATAL uint8 = iota
-	PANIC
-	ERROR
-	WARN
-	INFO
-	DEBUG
-	TRACE
-)
-
-// Level strings
-const (
-	StrFATAL = "FATAL"
-	StrPANIC = "PANIC"
-	StrERROR = "ERROR"
-	StrWARN  = "WARN"
-	StrINFO  = "INFO"
-	StrDEBUG = "DEBUG"
-	StrTRACE = "TRACE"
-)
-
-// Map level strings to uint8 values
-var lvMap = map[string]uint8{
-	StrFATAL: FATAL,
-	StrPANIC: PANIC,
-	StrERROR: ERROR,
-	StrWARN:  WARN,
-	StrINFO:  INFO,
-	StrDEBUG: DEBUG,
-	StrTRACE: TRACE,
-}
-
-//type Logger interface {
-//	Fatal(msg ...interface{})
-//	Panic(msg ...interface{})
-//	Error(msg ...interface{})
-//	Warn(msg ...interface{})
-//	Debug(msg ...interface{})
-//	Trace(msg ...interface{})
-//	Fatalf(format string, msg ...interface{})
-//	Panicf(format string, msg ...interface{})
-//	Errorf(format string, msg ...interface{})
-//	Warnf(format string, msg ...interface{})
-//	Debugf(format string, msg ...interface{})
-//	Tracef(format string, msg ...interface{})
-//	Level() uint8
-//	SetLevel(level string)
-//}
 
 type EasyLogger struct {
 	sync.Mutex
-	level uint8
-}
-
-var lg EasyLogger
-
-func init() {
+	l          *log.Logger // delegate
+	level      uint8
+	flag       int
 
 }
 
-func SetLevel(lv string) {
-	lg.level = lvMap[strings.ToUpper(lv)]
+func NewEasyLogger() LeveledLogger {
+	return &EasyLogger{l: log.New(os.Stderr, "", log.LstdFlags), level: WARN}
 }
 
-func Logln(lv uint8, msg interface{}) {
-	if IsLvEnabled(lv) {
-		log.Println(msg)
+func (logger *EasyLogger) buildMessage(level uint8, msg string) string {
+	var sb strings.Builder
+	if logger.flag&Llevel != 0 {
+		sb.WriteString(" [")
+		sb.WriteString(lvItoa[level])
+		sb.WriteString("] ")
+	}
+	sb.WriteString(msg)
+	return sb.String()
+}
+
+func (logger *EasyLogger) Message(level uint8, msg ...interface{}) string {
+	return logger.buildMessage(level, fmt.Sprint(msg...))
+}
+
+func (logger *EasyLogger) Messagef(level uint8, format string, msg ...interface{}) string {
+	return logger.buildMessage(level, fmt.Sprintf(format, msg...))
+}
+
+
+func (logger *EasyLogger) Fatal(msg ...interface{}) {
+	if logger.isLevelEnabled(FATAL) {
+		log.Fatal(logger.Message(FATAL, msg...))
 	}
 }
 
-func Fatal(msg interface{}) {
-	if IsLvEnabled(FATAL) {
-		log.Fatalln(msg)
+func (logger *EasyLogger) Panic(msg ...interface{}) {
+	if logger.isLevelEnabled(PANIC) {
+		log.Panic(logger.Message(PANIC, msg...))
 	}
 }
 
-func Fatalf(format string, v ...interface{}) {
-	if IsLvEnabled(FATAL) {
-		log.Printf(format, v)
+func (logger *EasyLogger) Error(msg ...interface{}) {
+	if logger.isLevelEnabled(ERROR) {
+		log.Print(logger.Message(ERROR, msg...))
 	}
 }
 
-func Panic(msg interface{}) {
-	if IsLvEnabled(PANIC) {
-		log.Panicln(msg)
+func (logger *EasyLogger) Warn(msg ...interface{}) {
+	if logger.isLevelEnabled(WARN) {
+		log.Print(logger.Message(WARN, msg...))
 	}
 }
 
-func Panicf(format string, v ...interface{}) {
-	if IsLvEnabled(PANIC) {
-		log.Printf(format, v)
+func (logger *EasyLogger) Info(msg ...interface{}) {
+	if logger.isLevelEnabled(INFO) {
+		log.Print(logger.Message(INFO, msg...))
 	}
 }
 
-func Error(msg ...interface{}) {
-	if IsLvEnabled(ERROR) {
-		log.Println(msg)
+func (logger *EasyLogger) Debug(msg ...interface{}) {
+	if logger.isLevelEnabled(DEBUG) {
+		log.Print(logger.Message(DEBUG, msg...))
 	}
 }
 
-func Errorf(format string, v ...interface{}) {
-	if IsLvEnabled(ERROR) {
-		log.Printf(format, v)
+func (logger *EasyLogger) Trace(msg ...interface{}) {
+	if logger.isLevelEnabled(TRACE) {
+		log.Print(logger.Message(TRACE, msg...))
 	}
 }
 
-func Warn(msg ...interface{}) {
-	if IsLvEnabled(WARN) {
-		log.Println(msg)
+func (logger *EasyLogger) Fatalf(format string, msg ...interface{}) {
+	if logger.isLevelEnabled(FATAL) {
+		log.Fatal(logger.Messagef(FATAL, format, msg...))
 	}
 }
 
-func Warnf(format string, v ...interface{}) {
-	if IsLvEnabled(WARN) {
-		log.Printf(format, v)
+func (logger *EasyLogger) Panicf(format string, msg ...interface{}) {
+	if logger.isLevelEnabled(PANIC) {
+		log.Panic(logger.Messagef(PANIC, format, msg...))
 	}
 }
 
-func Info(msg interface{}) {
-	if IsLvEnabled(INFO) {
-		log.Println(msg)
+func (logger *EasyLogger) Errorf(format string, msg ...interface{}) {
+	if logger.isLevelEnabled(ERROR) {
+		log.Print(logger.Messagef(ERROR, format, msg...))
 	}
 }
 
-func Infof(format string, v ...interface{}) {
-	if IsLvEnabled(INFO) {
-		log.Printf(format, v)
+func (logger *EasyLogger) Warnf(format string, msg ...interface{}) {
+	if logger.isLevelEnabled(WARN) {
+		log.Print(logger.Messagef(WARN, format, msg...))
 	}
 }
 
-
-func Debug(msg interface{}) {
-	if IsLvEnabled(DEBUG) {
-		log.Println(msg)
+func (logger *EasyLogger) Infof(format string, msg ...interface{}) {
+	if logger.isLevelEnabled(INFO) {
+		log.Print(logger.Messagef(INFO, format, msg...))
 	}
 }
 
-func Debugf(format string, v ...interface{}) {
-	if IsLvEnabled(DEBUG) {
-		log.Printf(format, v)
+func (logger *EasyLogger) Debugf(format string, msg ...interface{}) {
+	if logger.isLevelEnabled(DEBUG) {
+		log.Print(logger.Messagef(DEBUG, format, msg...))
 	}
 }
 
-func Trace(msg interface{}) {
-	if IsLvEnabled(TRACE) {
-		log.Println(msg)
+func (logger *EasyLogger) Tracef(format string, msg ...interface{}) {
+	if logger.isLevelEnabled(TRACE) {
+		log.Print(logger.Messagef(TRACE, format, msg...))
 	}
 }
 
-func Tracef(format string, v ...interface{}) {
-	if IsLvEnabled(TRACE) {
-		log.Printf(format, v)
-	}
+func (logger *EasyLogger) Flag() int {
+	return logger.flag
 }
 
-func IsLvEnabled(lv uint8) bool {
-	return lv <= lg.level
+func (logger *EasyLogger) SetFlag(flag int) LeveledLogger {
+	stdFlags := flag & (Ldate | Ltime | Lmicroseconds | Llongfile | Lshortfile | LUTC)
+	easylogFlags := flag & (Llevel)
+	logger.Lock()
+	logger.l.SetFlags(stdFlags)
+	logger.flag = easylogFlags
+	logger.Unlock()
+	return logger
 }
+
+func (logger *EasyLogger) Writer() io.Writer {
+	return logger.l.Writer()
+}
+
+func (logger *EasyLogger) SetWriter(w io.Writer) LeveledLogger {
+	logger.l.SetOutput(w)
+	return logger
+}
+
+func (logger *EasyLogger) Level() uint8 {
+	return logger.level
+}
+
+func (logger *EasyLogger) SetLevel(lv string) LeveledLogger {
+	logger.Lock()
+	logger.level = lvAtoi[strings.ToUpper(lv)]
+	logger.Unlock()
+	return logger
+}
+
+func (logger *EasyLogger) isLevelEnabled(lv uint8) bool {
+	return logger.level <= lv
+}
+
+
