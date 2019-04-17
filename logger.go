@@ -95,6 +95,18 @@ func SetWritter(w io.Writer) {
 	lg.SetWriter(w)
 }
 
+func SetOutputFile(dir string, file string, daily bool) (err error) {
+	fl, ok := lg.(*FileLogger)
+	if ok {
+		return fl.SetOutputFile(dir, file, daily)
+	}
+	fl = NewFileLogger(lg)
+	if err = fl.SetOutputFile(dir, file, daily); err == nil {
+		lg = fl
+	}
+	return
+}
+
 func SetFlag(flag int) {
 	lg.SetFlag(flag)
 }
