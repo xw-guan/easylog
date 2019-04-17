@@ -50,6 +50,18 @@ func (logger *FileLogger) SetOutputFile(dir string, file string, daily bool) (er
 	return
 }
 
+func SetOutputFile(dir string, file string, daily bool) (err error) {
+	fl, ok := lg.(*FileLogger)
+	if ok {
+		return fl.SetOutputFile(dir, file, daily)
+	}
+	fl = NewFileLogger(lg)
+	if err = fl.SetOutputFile(dir, file, daily); err == nil {
+		lg = fl
+	}
+	return
+}
+
 func silentlyCloseFile(f *os.File) {
 	Tracef("Closing file %s\n", f.Name())
 	if f != nil {

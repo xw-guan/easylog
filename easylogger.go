@@ -22,7 +22,7 @@ func NewEasyLogger() LeveledLogger {
 	return &EasyLogger{l: log.New(os.Stderr, "", log.LstdFlags), level: WARN}
 }
 
-func (logger *EasyLogger) buildMessage(level uint8, msg string) string {
+func (logger *EasyLogger) StringMessage(level uint8, msg string) string {
 	var sb strings.Builder
 	if logger.flag&Llevel != 0 {
 		sb.WriteString(" [")
@@ -34,11 +34,11 @@ func (logger *EasyLogger) buildMessage(level uint8, msg string) string {
 }
 
 func (logger *EasyLogger) Message(level uint8, msg ...interface{}) string {
-	return logger.buildMessage(level, fmt.Sprint(msg...))
+	return logger.StringMessage(level, fmt.Sprint(msg...))
 }
 
 func (logger *EasyLogger) Messagef(level uint8, format string, msg ...interface{}) string {
-	return logger.buildMessage(level, fmt.Sprintf(format, msg...))
+	return logger.StringMessage(level, fmt.Sprintf(format, msg...))
 }
 
 

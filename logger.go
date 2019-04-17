@@ -62,6 +62,18 @@ const (
 )
 
 type LeveledLogger interface {
+	SimpleLogger   // extend SimpleLogger
+	MessageBuilder // extend MessageBuilder
+	Flag() int
+	SetFlag(flag int) LeveledLogger
+	Writer() io.Writer
+	SetWriter(w io.Writer) LeveledLogger
+	Level() uint8
+	SetLevel(lv string) LeveledLogger
+	isLevelEnabled(lv uint8) bool
+}
+
+type SimpleLogger interface {
 	Fatal(msg ...interface{})
 	Panic(msg ...interface{})
 	Error(msg ...interface{})
@@ -76,13 +88,12 @@ type LeveledLogger interface {
 	Infof(format string, msg ...interface{})
 	Debugf(format string, msg ...interface{})
 	Tracef(format string, msg ...interface{})
-	Flag() int
-	SetFlag(flag int) LeveledLogger
-	Writer() io.Writer
-	SetWriter(w io.Writer) LeveledLogger
-	Level() uint8
-	SetLevel(lv string) LeveledLogger
-	isLevelEnabled(lv uint8) bool
+}
+
+type MessageBuilder interface {
+	Message(level uint8, msg ...interface{}) string
+	Messagef(level uint8, format string, msg ...interface{}) string
+	StringMessage(level uint8, msg string) string
 }
 
 var lg LeveledLogger
@@ -93,18 +104,6 @@ func SetLevel(lv string) {
 
 func SetWritter(w io.Writer) {
 	lg.SetWriter(w)
-}
-
-func SetOutputFile(dir string, file string, daily bool) (err error) {
-	fl, ok := lg.(*FileLogger)
-	if ok {
-		return fl.SetOutputFile(dir, file, daily)
-	}
-	fl = NewFileLogger(lg)
-	if err = fl.SetOutputFile(dir, file, daily); err == nil {
-		lg = fl
-	}
-	return
 }
 
 func SetFlag(flag int) {
