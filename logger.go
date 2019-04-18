@@ -2,6 +2,7 @@ package easylog
 
 import (
 	"io"
+	"strings"
 )
 
 // Levels
@@ -63,7 +64,7 @@ const (
 
 type LeveledLogger interface {
 	SimpleLogger   // extend SimpleLogger
-	MessageBuilder // extend MessageBuilder
+	MessageBuilder // extend MessageContainer
 	Flag() int
 	SetFlag(flag int) LeveledLogger
 	Writer() io.Writer
@@ -93,75 +94,75 @@ type SimpleLogger interface {
 type MessageBuilder interface {
 	Message(level uint8, msg ...interface{}) string
 	Messagef(level uint8, format string, msg ...interface{}) string
-	StringMessage(level uint8, msg string) string
+	BuildMessage(level uint8, msg string, sb *strings.Builder) *strings.Builder
 }
 
-var lg LeveledLogger
+var stdLogger LeveledLogger
 
 func SetLevel(lv string) {
-	lg.SetLevel(lv)
+	stdLogger.SetLevel(lv)
 }
 
 func SetWritter(w io.Writer) {
-	lg.SetWriter(w)
+	stdLogger.SetWriter(w)
 }
 
 func SetFlag(flag int) {
-	lg.SetFlag(flag)
+	stdLogger.SetFlag(flag)
 }
 
 func Fatal(msg ...interface{}) {
-	lg.Fatal(msg...)
+	stdLogger.Fatal(msg...)
 }
 
 func Fatalf(format string, msg ...interface{}) {
-	lg.Fatalf(format, msg...)
+	stdLogger.Fatalf(format, msg...)
 }
 
 func Panic(msg ...interface{}) {
-	lg.Panic(msg...)
+	stdLogger.Panic(msg...)
 }
 
 func Panicf(format string, msg ...interface{}) {
-	lg.Panicf(format, msg...)
+	stdLogger.Panicf(format, msg...)
 }
 
 func Error(msg ...interface{}) {
-	lg.Error(msg...)
+	stdLogger.Error(msg...)
 }
 
 func Errorf(format string, msg ...interface{}) {
-	lg.Errorf(format, msg...)
+	stdLogger.Errorf(format, msg...)
 }
 
 func Warn(msg ...interface{}) {
-	lg.Warn(msg...)
+	stdLogger.Warn(msg...)
 }
 
 func Warnf(format string, msg ...interface{}) {
-	lg.Warnf(format, msg...)
+	stdLogger.Warnf(format, msg...)
 }
 
 func Info(msg ...interface{}) {
-	lg.Info(msg...)
+	stdLogger.Info(msg...)
 }
 
 func Infof(format string, msg ...interface{}) {
-	lg.Infof(format, msg)
+	stdLogger.Infof(format, msg)
 }
 
 func Debug(msg ...interface{}) {
-	lg.Debug(msg...)
+	stdLogger.Debug(msg...)
 }
 
 func Debugf(format string, msg ...interface{}) {
-	lg.Debugf(format, msg)
+	stdLogger.Debugf(format, msg)
 }
 
 func Trace(msg ...interface{}) {
-	lg.Trace(msg...)
+	stdLogger.Trace(msg...)
 }
 
 func Tracef(format string, msg ...interface{}) {
-	lg.Tracef(format, msg)
+	stdLogger.Tracef(format, msg)
 }

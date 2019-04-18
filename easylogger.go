@@ -9,38 +9,36 @@ import (
 	"sync"
 )
 
-
 type EasyLogger struct {
 	sync.Mutex
-	l          *log.Logger // delegate
-	level      uint8
-	flag       int
-
+	l     *log.Logger // delegate
+	level uint8
+	flag  int
 }
 
 func NewEasyLogger() LeveledLogger {
 	return &EasyLogger{l: log.New(os.Stderr, "", log.LstdFlags), level: WARN}
 }
 
-func (logger *EasyLogger) StringMessage(level uint8, msg string) string {
-	var sb strings.Builder
+func (logger *EasyLogger) BuildMessage(level uint8, msg string, sb *strings.Builder) *strings.Builder {
 	if logger.flag&Llevel != 0 {
 		sb.WriteString(" [")
 		sb.WriteString(lvItoa[level])
 		sb.WriteString("] ")
 	}
 	sb.WriteString(msg)
-	return sb.String()
+	return sb
 }
 
 func (logger *EasyLogger) Message(level uint8, msg ...interface{}) string {
-	return logger.StringMessage(level, fmt.Sprint(msg...))
+	var sb strings.Builder
+	return logger.BuildMessage(level, fmt.Sprint(msg...), &sb).String()
 }
 
 func (logger *EasyLogger) Messagef(level uint8, format string, msg ...interface{}) string {
-	return logger.StringMessage(level, fmt.Sprintf(format, msg...))
+	var sb strings.Builder
+	return logger.BuildMessage(level, fmt.Sprintf(format, msg...), &sb).String()
 }
-
 
 func (logger *EasyLogger) Fatal(msg ...interface{}) {
 	if logger.isLevelEnabled(FATAL) {
@@ -163,5 +161,3 @@ func (logger *EasyLogger) SetLevel(lv string) LeveledLogger {
 func (logger *EasyLogger) isLevelEnabled(lv uint8) bool {
 	return logger.level <= lv
 }
-
-

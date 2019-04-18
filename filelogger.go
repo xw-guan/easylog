@@ -51,13 +51,13 @@ func (logger *FileLogger) SetOutputFile(dir string, file string, daily bool) (er
 }
 
 func SetOutputFile(dir string, file string, daily bool) (err error) {
-	fl, ok := lg.(*FileLogger)
+	fl, ok := stdLogger.(*FileLogger)
 	if ok {
 		return fl.SetOutputFile(dir, file, daily)
 	}
-	fl = NewFileLogger(lg)
+	fl = NewFileLogger(stdLogger)
 	if err = fl.SetOutputFile(dir, file, daily); err == nil {
-		lg = fl
+		stdLogger = fl
 	}
 	return
 }
