@@ -17,12 +17,14 @@ type EasyLogger struct {
 }
 
 func NewEasyLogger() LeveledLogger {
-	return &EasyLogger{l: log.New(os.Stderr, "", log.LstdFlags|Llevel), level: WARN}
+	logger := &EasyLogger{l: log.New(os.Stderr, "", log.LstdFlags), level: WARN}
+	logger.flag = Llevel
+	return logger
 }
 
 func (logger *EasyLogger) BuildMessage(level uint8, msg string, sb *strings.Builder) *strings.Builder {
 	if logger.flag&Llevel != 0 {
-		sb.WriteString(" [")
+		sb.WriteString("[")
 		sb.WriteString(lvItoa[level])
 		sb.WriteString("] ")
 	}
@@ -159,7 +161,7 @@ func (logger *EasyLogger) SetLevel(lv string) LeveledLogger {
 }
 
 func (logger *EasyLogger) isLevelEnabled(lv uint8) bool {
-	return logger.level <= lv
+	return logger.level >= lv
 }
 
 func init() {

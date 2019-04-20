@@ -148,7 +148,7 @@ func Info(msg ...interface{}) {
 }
 
 func Infof(format string, msg ...interface{}) {
-	stdLogger.Infof(format, msg)
+	stdLogger.Infof(format, msg...)
 }
 
 func Debug(msg ...interface{}) {
@@ -156,7 +156,7 @@ func Debug(msg ...interface{}) {
 }
 
 func Debugf(format string, msg ...interface{}) {
-	stdLogger.Debugf(format, msg)
+	stdLogger.Debugf(format, msg...)
 }
 
 func Trace(msg ...interface{}) {
@@ -164,5 +164,5 @@ func Trace(msg ...interface{}) {
 }
 
 func Tracef(format string, msg ...interface{}) {
-	stdLogger.Tracef(format, msg)
+	stdLogger.Tracef(format, msg...)
 }
