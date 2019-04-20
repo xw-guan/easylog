@@ -33,7 +33,7 @@ func (logger *FileLogger) SetOutputFile(dir string, file string, daily bool) (er
 	logger.file = file
 	logger.daily = daily
 
-	file += ".log"
+	//file += ".log"
 	if daily {
 		file = time.Now().Format("060102") + "_" + file
 	}
@@ -63,8 +63,8 @@ func SetOutputFile(dir string, file string, daily bool) (err error) {
 }
 
 func silentlyCloseFile(f *os.File) {
-	Tracef("Closing file %s\n", f.Name())
 	if f != nil {
+		Tracef("Closing file %s\n", f.Name())
 		if err := f.Close(); err != nil {
 			Errorf("Unable to close %s, it may cause a memory leak\n", f.Name())
 		}

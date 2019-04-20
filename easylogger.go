@@ -44,85 +44,85 @@ func (logger *EasyLogger) Messagef(level uint8, format string, msg ...interface{
 
 func (logger *EasyLogger) Fatal(msg ...interface{}) {
 	if logger.isLevelEnabled(FATAL) {
-		log.Fatal(logger.Message(FATAL, msg...))
+		logger.l.Fatal(logger.Message(FATAL, msg...))
 	}
 }
 
 func (logger *EasyLogger) Panic(msg ...interface{}) {
 	if logger.isLevelEnabled(PANIC) {
-		log.Panic(logger.Message(PANIC, msg...))
+		logger.l.Panic(logger.Message(PANIC, msg...))
 	}
 }
 
 func (logger *EasyLogger) Error(msg ...interface{}) {
 	if logger.isLevelEnabled(ERROR) {
-		log.Print(logger.Message(ERROR, msg...))
+		logger.l.Print(logger.Message(ERROR, msg...))
 	}
 }
 
 func (logger *EasyLogger) Warn(msg ...interface{}) {
 	if logger.isLevelEnabled(WARN) {
-		log.Print(logger.Message(WARN, msg...))
+		logger.l.Print(logger.Message(WARN, msg...))
 	}
 }
 
 func (logger *EasyLogger) Info(msg ...interface{}) {
 	if logger.isLevelEnabled(INFO) {
-		log.Print(logger.Message(INFO, msg...))
+		logger.l.Print(logger.Message(INFO, msg...))
 	}
 }
 
 func (logger *EasyLogger) Debug(msg ...interface{}) {
 	if logger.isLevelEnabled(DEBUG) {
-		log.Print(logger.Message(DEBUG, msg...))
+		logger.l.Print(logger.Message(DEBUG, msg...))
 	}
 }
 
 func (logger *EasyLogger) Trace(msg ...interface{}) {
 	if logger.isLevelEnabled(TRACE) {
-		log.Print(logger.Message(TRACE, msg...))
+		logger.l.Print(logger.Message(TRACE, msg...))
 	}
 }
 
 func (logger *EasyLogger) Fatalf(format string, msg ...interface{}) {
 	if logger.isLevelEnabled(FATAL) {
-		log.Fatal(logger.Messagef(FATAL, format, msg...))
+		logger.l.Fatal(logger.Messagef(FATAL, format, msg...))
 	}
 }
 
 func (logger *EasyLogger) Panicf(format string, msg ...interface{}) {
 	if logger.isLevelEnabled(PANIC) {
-		log.Panic(logger.Messagef(PANIC, format, msg...))
+		logger.l.Panic(logger.Messagef(PANIC, format, msg...))
 	}
 }
 
 func (logger *EasyLogger) Errorf(format string, msg ...interface{}) {
 	if logger.isLevelEnabled(ERROR) {
-		log.Print(logger.Messagef(ERROR, format, msg...))
+		logger.l.Print(logger.Messagef(ERROR, format, msg...))
 	}
 }
 
 func (logger *EasyLogger) Warnf(format string, msg ...interface{}) {
 	if logger.isLevelEnabled(WARN) {
-		log.Print(logger.Messagef(WARN, format, msg...))
+		logger.l.Print(logger.Messagef(WARN, format, msg...))
 	}
 }
 
 func (logger *EasyLogger) Infof(format string, msg ...interface{}) {
 	if logger.isLevelEnabled(INFO) {
-		log.Print(logger.Messagef(INFO, format, msg...))
+		logger.l.Print(logger.Messagef(INFO, format, msg...))
 	}
 }
 
 func (logger *EasyLogger) Debugf(format string, msg ...interface{}) {
 	if logger.isLevelEnabled(DEBUG) {
-		log.Print(logger.Messagef(DEBUG, format, msg...))
+		logger.l.Print(logger.Messagef(DEBUG, format, msg...))
 	}
 }
 
 func (logger *EasyLogger) Tracef(format string, msg ...interface{}) {
 	if logger.isLevelEnabled(TRACE) {
-		log.Print(logger.Messagef(TRACE, format, msg...))
+		logger.l.Print(logger.Messagef(TRACE, format, msg...))
 	}
 }
 
