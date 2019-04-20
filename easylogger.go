@@ -17,7 +17,7 @@ type EasyLogger struct {
 }
 
 func NewEasyLogger() LeveledLogger {
-	return &EasyLogger{l: log.New(os.Stderr, "", log.LstdFlags), level: WARN}
+	return &EasyLogger{l: log.New(os.Stderr, "", log.LstdFlags|Llevel), level: WARN}
 }
 
 func (logger *EasyLogger) BuildMessage(level uint8, msg string, sb *strings.Builder) *strings.Builder {
@@ -160,4 +160,8 @@ func (logger *EasyLogger) SetLevel(lv string) LeveledLogger {
 
 func (logger *EasyLogger) isLevelEnabled(lv uint8) bool {
 	return logger.level <= lv
+}
+
+func init() {
+	stdLogger = NewEasyLogger()
 }
